@@ -6,6 +6,8 @@ import vine from "@vinejs/vine";
 
 import bcrypt from "bcrypt";
 
+import jwt from "jsonwebtoken";
+
 class AuthController {
   static async register(req, res) {
     try {
@@ -101,8 +103,23 @@ class AuthController {
 
         //* Here we reach if our email and password is match with the registered email and password
 
+        //* Assign token to user if User is Successfully Login
+
+        const payloadData = {
+          id: findUser.id,
+          name: findUser.name,
+          email: findUser.email,
+          profile: findUser.profile,
+        };
+        const token = jwt.sign(payloadData, process.env.JWT_SECRET, {
+          expiresIn: "365d"
+        });
+
         return res.json({
           message: "Logged In",
+
+          //* Bearer laga hua hai means ki ye Authentication ke liye hi token hai, If we not used this then it's also work. `Bearer` is optional to write
+          access_token: `Bearer ${token}`
         });
       }
 
