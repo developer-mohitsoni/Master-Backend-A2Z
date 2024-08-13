@@ -1,12 +1,18 @@
 class ProfileController {
   static async index(req, res) {
-    const user = req.user;
+    try {
+      const user = req.user;
 
-    return res.json({
-      status: 200,
-      message: "Profile fetched successfully",
-      user,
-    });
+      return res.json({
+        status: 200,
+        message: "Profile fetched successfully",
+        user,
+      });
+    } catch (error) {
+      return res.status(500).json({
+        message: "Something Went Wrong...",
+      });
+    }
   }
   static async store() {}
   static async show() {}
@@ -14,4 +20,4 @@ class ProfileController {
   static async destroy() {}
 }
 
-export default ProfileController
+export default ProfileController;
