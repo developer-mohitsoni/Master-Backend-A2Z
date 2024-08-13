@@ -4,6 +4,8 @@ import "dotenv/config";
 
 const app = express();
 
+import fileUpload from "express-fileupload";
+
 const PORT = process.env.PORT || 3000;
 
 //* Middleware:-
@@ -14,6 +16,7 @@ app.use(
     extended: false,
   })
 );
+app.use(fileUpload())
 
 app.get("/", (req, res) => {
   return res.json({
