@@ -2,6 +2,8 @@ import { errors } from "@vinejs/vine";
 import prisma from "../DB/db.config.js";
 import { registerSchema } from "../validations/authValidation.js";
 
+import vine from "@vinejs/vine";
+
 class AuthController {
   static async register(req, res) {
     try {
