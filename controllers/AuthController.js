@@ -78,8 +78,38 @@ class AuthController {
 
       const payload = await validator.validate(body);
 
-      return res.json({
-        payload,
+      //* Find user with email registered from DB
+
+      const findUser = await prisma.users.findUnique({
+        where: {
+          email: payload.email,
+        },
+      });
+
+      //* User email match with the Registered Email from DB
+      if (findUser) {
+        //* If user is found then compare it's password from it's given payload with the registered User password
+
+        //* NOTE:- we use !(negatation for if user password not match) to easily return from here
+        if (!bcrypt.compareSync(payload.password, findUser.password)) {
+          return res.status(400).json({
+            errors: {
+              email: "Invalid Credentials.",
+            },
+          });
+        }
+
+        //* Here we reach if our email and password is match with the registered email and password
+
+        return res.json({
+          message: "Logged In",
+        });
+      }
+
+      return res.status(400).json({
+        errors: {
+          email: "No User Found",
+        },
       });
     } catch (error) {
       console.log("The error is: ", error);
