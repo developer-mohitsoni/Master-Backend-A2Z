@@ -13,3 +13,5 @@ class ProfileController {
   static async update() {}
   static async destroy() {}
 }
+
+export default ProfileController
