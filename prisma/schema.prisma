@@ -18,5 +18,5 @@ model Users {
   name     String  @db.VarChar(191)
   email    String  @db.VarChar(191)
   password String
-  profilt  String?
+  profile  String?
 }
