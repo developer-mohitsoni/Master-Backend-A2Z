@@ -12,6 +12,12 @@ app.get("/", (req, res) => {
   });
 });
 
+// Import Routes
+
+import ApiRoutes from "./routes/api.js";
+
+app.use("/api", ApiRoutes);
+
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
