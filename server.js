@@ -1,10 +1,19 @@
-import express from "express";
+import express, { urlencoded } from "express";
 
 import "dotenv/config";
 
 const app = express();
 
 const PORT = process.env.PORT || 3000;
+
+//* Middleware:-
+
+app.use(express.json());
+app.use(
+  express.urlencoded({
+    extended: false,
+  })
+);
 
 app.get("/", (req, res) => {
   return res.json({
