@@ -1,6 +1,8 @@
 class ProfileController {
+  // For getting user information from DB
   static async index(req, res) {
     try {
+      // Jo humne payload mai paas kiya tha at the time of creating token via jwt wohi payload mujhe req.user mai milega yahan
       const user = req.user;
 
       return res.json({
@@ -14,9 +16,28 @@ class ProfileController {
       });
     }
   }
+
+  // To store something in DB
   static async store() {}
+
+  // To fetch single record from DB
   static async show() {}
-  static async update() {}
+
+  // To update something from DB
+  static async update() {
+    const { id } = req.params;
+
+    const authUser = req.user;
+
+    if (!req.files || Object.keys(req.files).length === 0) {
+      return res.status(400).json({
+        status: 400,
+        message: "Profile image is required",
+      });
+    }
+  }
+
+  // To remove something from DB
   static async destroy() {}
 }
 
