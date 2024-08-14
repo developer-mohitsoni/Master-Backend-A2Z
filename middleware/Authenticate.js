@@ -1,5 +1,7 @@
 import jwt from "jsonwebtoken";
 
+// Ye auth middlewar mera ye check karega yadi mai jabb bhi apne profile yaa kisi or page par jaane ki kosis karunga toh mujhe ek middleware chaiye hi hoga jo ki mere token ko verify karega jab mera user successfully login hoga tab.
+
 const authMiddleware = (req, res, next) => {
   // Yeh line request header mein se "authorization" header ko nikal kar authHeader variable mein store kar rahi hai.
   const authHeader = req.headers.authorization;
