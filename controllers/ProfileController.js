@@ -1,3 +1,5 @@
+import { imageValidator } from "../utils/helper.js";
+
 class ProfileController {
   // For getting user information from DB
   static async index(req, res) {
@@ -33,6 +35,18 @@ class ProfileController {
       return res.status(400).json({
         status: 400,
         message: "Profile image is required",
+      });
+    }
+
+    const profile = req.files.profile;
+
+    const message = imageValidator(profile.size, profile.mimetype);
+
+    if (message !== null) {
+      return res.status(400).json({
+        errors: {
+          profile: message,
+        },
       });
     }
   }
