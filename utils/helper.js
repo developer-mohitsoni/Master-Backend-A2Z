@@ -1,6 +1,9 @@
 // Import supportedMimes that contains the supported file information required to upload
 import { supportedMimes } from "../config/filesystem.js";
 
+// Import uuid package for generating unique id of each image
+import { v4 as uuidv4 } from "uuid";
+
 // This function is used for to check image validating that takes two argument (size, mime) where size => size of the file in bytes and mime => type of file
 export const imageValidator = (size, mime) => {
   if (bytesToMb(size) > 2) {
@@ -18,4 +21,8 @@ export const imageValidator = (size, mime) => {
 // This function convert bytes to MB
 export const bytesToMb = (bytes) => {
   return bytes / (1024 * 1024);
+};
+
+export const generateRandomNum = () => {
+  return uuidv4();
 };
