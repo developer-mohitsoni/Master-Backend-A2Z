@@ -26,11 +26,14 @@ class ProfileController {
   static async show() {}
 
   // To update something from DB
-  static async update() {
+  static async update(req, res) {
+    // ye meri id ko fetch karega jo hum url mai paas kar rahe honge using req.params.id ki madad se.
     const { id } = req.params;
 
+    // ue mera user ko dikhayega ji ki abhi login hua hai
     const authUser = req.user;
 
+    // yadi req.file mai ko bhi entry nai hai yaa usko length 0 hai toh return kar do ye
     if (!req.files || Object.keys(req.files).length === 0) {
       return res.status(400).json({
         status: 400,
@@ -38,10 +41,13 @@ class ProfileController {
       });
     }
 
+    // ye meri profile naame ke label ko show kar raha hai jo ki hum label mai enter karte hai wo
     const profile = req.files.profile;
 
+    // Ye mera ek message return karega from "helper.js" file se jo ki check karega ki user ka image validate hau yaa nai
     const message = imageValidator(profile.size, profile.mimetype);
 
+    // Yadi message khaali hoga to return kardo ye
     if (message !== null) {
       return res.status(400).json({
         errors: {
@@ -49,6 +55,13 @@ class ProfileController {
         },
       });
     }
+
+    // Agar image validate hogi toh return kar do ye
+    return res.json({
+      name: profile.name,
+      size: profile.size,
+      mime: profile.mimetype
+    })
   }
 
   // To remove something from DB
