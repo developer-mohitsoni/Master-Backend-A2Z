@@ -34,6 +34,7 @@ const authMiddleware = (req, res, next) => {
       });
     }
 
+    // Ye mere use ki information ko store karega
     req.user = user;
   });
 
