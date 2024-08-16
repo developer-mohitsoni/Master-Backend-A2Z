@@ -20,7 +20,7 @@ router.put("/profile/:id", authMiddleware, ProfileController.update); //! Privat
 router.get("/news", NewsController.index);
 router.post("/news", authMiddleware, NewsController.store);
 router.get("/news/:id", NewsController.show);
-router.put("/news/:id", NewsController.update);
+router.put("/news/:id", authMiddleware, NewsController.update);
 router.delete("/news/:id", NewsController.destroy);
 
 export default router;
