@@ -4,6 +4,7 @@ import ProfileController from "../controllers/ProfileController.js";
 
 import authMiddleware from "../middleware/Authenticate.js";
 import NewsController from "../controllers/NewsController.js";
+import redisCache from "../DB/redis.config.js";
 
 const router = Router();
 
@@ -17,7 +18,7 @@ router.put("/profile/:id", authMiddleware, ProfileController.update); //! Privat
 
 //* News routes
 
-router.get("/news", NewsController.index);
+router.get("/news", redisCache.route(), NewsController.index);
 router.post("/news", authMiddleware, NewsController.store);
 router.get("/news/:id", NewsController.show);
 router.put("/news/:id", authMiddleware, NewsController.update);
