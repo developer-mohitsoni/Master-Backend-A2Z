@@ -40,3 +40,22 @@ export const removeImage = (imageName) => {
     fs.unlinkSync(path);
   }
 };
+
+//* Upload Image
+
+export const uploadImage = (image) => {
+  // imgExt => returning an array by spliting the name of profile image i.e firstOne => Name of file secondOne => extension of profile image
+  const imgExt = image?.name.split(".");
+
+  // This will contains the randomnumber with profile image extension as:- 545542.img, 5453154.wbpeg, 54240.jpeg etc.
+  const imageName = generateRandomNum() + "." + imgExt[1];
+
+  // Now this will upload our image in the given directory
+  const uploadPath = process.cwd() + "/public/images/" + imageName;
+
+  image.mv(uploadPath, (err) => {
+    if (err) throw err;
+  });
+
+  return imageName;
+};
