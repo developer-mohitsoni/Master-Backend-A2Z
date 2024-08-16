@@ -4,14 +4,17 @@ import { newsSchema } from "../validations/newsValidation.js";
 import prisma from "../DB/db.config.js";
 
 import { generateRandomNum, imageValidator } from "../utils/helper.js";
+import newsApiTransform from "../transform/newsAPITransform.js";
 
 class NewsController {
   static async index(req, res) {
     const news = await prisma.news.findMany({});
 
+    const newsTransform = news?.map((item)=> newsApiTransform.transform(item))
+
     return res.json({
       status: 200,
-      news,
+      news: newsTransform,
     });
   }
 
