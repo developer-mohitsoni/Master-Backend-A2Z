@@ -7,6 +7,7 @@ class newsApiTransform {
       heading: news.title,
       news: news.content,
       image: getImageUrl(news.image),
+      created_at: news.created_at,
     };
   }
 }
