@@ -16,6 +16,7 @@ app.use(
     extended: false,
   })
 );
+app.use(express.static("public"))
 app.use(fileUpload())
 
 app.get("/", (req, res) => {
