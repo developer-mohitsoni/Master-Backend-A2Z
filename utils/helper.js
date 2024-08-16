@@ -4,6 +4,8 @@ import { supportedMimes } from "../config/filesystem.js";
 // Import uuid package for generating unique id of each image
 import { v4 as uuidv4 } from "uuid";
 
+import fs from "fs";
+
 // This function is used for to check image validating that takes two argument (size, mime) where size => size of the file in bytes and mime => type of file
 export const imageValidator = (size, mime) => {
   if (bytesToMb(size) > 2) {
@@ -29,4 +31,12 @@ export const generateRandomNum = () => {
 
 export const getImageUrl = (imgName) => {
   return `${process.env.APP_URL}/images/${imgName}`;
+};
+
+export const removeImage = (imageName) => {
+  const path = process.cwd() + "/public/images/" + imageName;
+
+  if (fs.existsSync(path)) {
+    fs.unlinkSync(path);
+  }
 };
