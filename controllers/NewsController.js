@@ -189,7 +189,7 @@ class NewsController {
         }
         //* Upload new image
         const imageName = uploadImage(image);
-        payload.image = imageName
+        payload.image = imageName;
         //* Delete old image
         removeImage(news.image);
       }
@@ -222,7 +222,44 @@ class NewsController {
     }
   }
 
-  static async destroy(req, res) {}
+  static async destroy(req, res) {
+    try {
+      const { id } = req.params;
+
+      const user = req.user;
+
+      const news = await prisma.news.findUnique({
+        where: {
+          id: Number(id),
+        },
+      });
+
+      if (user.id !== news.user_id) {
+        return res.status(401).json({
+          message: "Unauthorized",
+        });
+      }
+
+      //* Delete image from filesystem
+
+      removeImage(news.image);
+
+      await prisma.news.delete({
+        where: {
+          id: Number(id),
+        },
+      });
+
+      return res.status(200).json({
+        message: "News Deleted Successfully",
+      });
+    } catch (error) {
+      return res.status(500).json({
+        status: 500,
+        message: "Something went wrong. Please try again",
+      });
+    }
+  }
 }
 
 export default NewsController;
