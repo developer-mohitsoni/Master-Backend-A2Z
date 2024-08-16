@@ -1,5 +1,5 @@
-import vine from "@vinejs/vine";
-import { newsSchema } from "../validations/newsValidation";
+import vine, { errors } from "@vinejs/vine";
+import { newsSchema } from "../validations/newsValidation.js";
 
 class NewsController {
   static async index(req, res) {}
