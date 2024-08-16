@@ -41,3 +41,5 @@ class NewsController {
 
   static async destroy(req, res) {}
 }
+
+export default NewsController;
