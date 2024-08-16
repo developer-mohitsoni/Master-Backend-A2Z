@@ -10,11 +10,12 @@ import {
   uploadImage,
 } from "../utils/helper.js";
 import newsApiTransform from "../transform/newsAPITransform.js";
+import redisCache from "../DB/redis.config.js";
 
 class NewsController {
   static async index(req, res) {
     const page = Number(req.query.page) || 1;
-    const limit = Number(req.query.page) || 1;
+    const limit = Number(req.query.page) || 10;
 
     if (page <= 0) {
       page = 1;
@@ -95,6 +96,12 @@ class NewsController {
 
       const news = await prisma.news.create({
         data: payload,
+      });
+
+      //* remove cache
+
+      redisCache.del("/api/news", (err) => {
+        if (err) throw err;
       });
 
       return res.json({
