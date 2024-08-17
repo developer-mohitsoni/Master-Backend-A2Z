@@ -1,3 +1,4 @@
+// Ye supported image mime types ka array hai
 export const supportedMimes = [
   "image/png",
   "image/jpg",

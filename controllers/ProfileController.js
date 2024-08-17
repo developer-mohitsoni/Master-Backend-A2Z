@@ -3,20 +3,22 @@ import prisma from "../DB/db.config.js";
 import { generateRandomNum, imageValidator } from "../utils/helper.js";
 
 class ProfileController {
-  // For getting user information from DB
+  // Database se user ki information ko get karne ke liye ek static async function "index" banaya gaya hai
   static async index(req, res) {
     try {
-      // Jo humne payload mai paas kiya tha at the time of creating token via jwt wohi payload mujhe req.user mai milega yahan
+      // Jab humne JWT token create kiya tha, us time jo data (payload) usme pass kiya tha, woh data ab req.user mein available hai
       const user = req.user;
 
+      // Agar user ka data mil jata hai, toh successful response ke saath user ka data return karte hain
       return res.json({
-        status: 200,
-        message: "Profile fetched successfully",
-        user,
+        status: 200, // Status code 200 indicate karta hai ki request successful rahi
+        message: "Profile fetched successfully", // Success message
+        user, // User ka data response mein bheja jata hai
       });
     } catch (error) {
+      // Agar koi error aata hai, toh yeh code chalega aur error message ke saath response return karega
       return res.status(500).json({
-        message: "Something Went Wrong...",
+        message: "Something Went Wrong...", // Error message agar kuch galat ho gaya
       });
     }
   }
@@ -30,64 +32,67 @@ class ProfileController {
   // To update something from DB
   static async update(req, res) {
     try {
-      // ye meri id ko fetch karega jo hum url mai paas kar rahe honge using req.params.id ki madad se.
+      // Ye id ko extract kar raha hai jo URL ke params mein se mil rahi hai
       const { id } = req.params;
 
-      // yadi req.file mai ko bhi entry nai hai yaa usko length 0 hai toh return kar do ye
+      // Agar request mein files nahi hain ya files ka object empty hai, toh error message ke saath response return karo
       if (!req.files || Object.keys(req.files).length === 0) {
         return res.status(400).json({
-          status: 400,
-          message: "Profile image is required",
+          status: 400, // Status code 400: Bad Request
+          message: "Profile image is required", // Error message agar profile image nahi milti
         });
       }
 
-      // ye meri image ko show kar raha hai jo ki hum apne profile lable par upload kar rahe hai uska naam, size, mimetype bhi
+      // Profile image ko req.files se extract karte hain
       const profile = req.files.profile;
 
-      // Ye mera ek message return karega from "helper.js" file se jo ki check karega ki user ka image validate hau yaa nai
+      // ImageValidator function ko call karte hain jo image ke size aur mimetype ko check karega
       const message = imageValidator(profile.size, profile.mimetype);
 
-      // Yadi message khaali hoga to return kardo ye
+      // Agar message null nahi hai, yani image valid nahi hai, toh error message ke saath response return karo
       if (message !== null) {
         return res.status(400).json({
           errors: {
-            profile: message,
+            profile: message, // Invalid image ka error message
           },
         });
       }
 
-      // imgExt => returning an array by spliting the name of profile image i.e firstOne => Name of file secondOne => extension of profile image
+      // Profile image ke naam ko split karke uska extension nikal rahe hain
       const imgExt = profile?.name.split(".");
 
-      // This will contains the randomnumber with profile image extension as:- 545542.img, 5453154.wbpeg, 54240.jpeg etc.
+      // Random number generate karke uska extension add karke image ka naya naam bana rahe hain
       const imageName = generateRandomNum() + "." + imgExt[1];
 
-      // Now this will upload our image in the given directory
+      // Upload path set kar rahe hain jahan image ko save karna hai
       const uploadPath = process.cwd() + "/public/images/" + imageName;
 
+      // Image ko specified directory mein move karte hain, agar error aaya toh throw karenge
       profile.mv(uploadPath, (err) => {
         if (err) throw err;
       });
 
+      // User ke profile ko database mein update karte hain nayi image ke naam ke saath
       await prisma.users.update({
         data: {
-          profile: imageName,
+          profile: imageName, // Profile image ka naya naam database mein update karte hain
         },
         where: {
-          id: Number(id),
+          id: Number(id), // User ki ID ke basis par update karte hain
         },
       });
 
-      // Agar image validate hogi toh return kar do ye
+      // Success message ke saath response return karte hain agar sab kuch sahi raha
       return res.json({
-        status: 200,
-        message: "Profile Updated Successfully!",
+        status: 200, // Success status code
+        message: "Profile Updated Successfully!", // Success message
       });
     } catch (err) {
+      // Agar koi error aata hai toh error message ke saath response return karte hain
       console.log("The error is", err);
 
       return res.status(500).json({
-        message: "Something went wrong. Please try again!",
+        message: "Something went wrong. Please try again!", // Error message
       });
     }
   }

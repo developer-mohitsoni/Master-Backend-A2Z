@@ -6,25 +6,27 @@ import { v4 as uuidv4 } from "uuid";
 
 import fs from "fs";
 
-// This function is used for to check image validating that takes two argument (size, mime) where size => size of the file in bytes and mime => type of file
+// Ye function image ko validate karne ke liye use hota hai jo size aur mime type ko check karta hai
 export const imageValidator = (size, mime) => {
+  // Agar file ka size 2MB se zyada hai toh error message return karega
   if (bytesToMb(size) > 2) {
     return "Image size must be less than 2MB";
 
-    // If the given file type is not include in supportedMimes then
+    // Agar file ka type supported types mein nahi hai toh error message return karega
   } else if (!supportedMimes.includes(mime)) {
-    return "Image must be type of png, jpg, jpeg, svg, jpeg, wpeg...";
+    return "Image must be type of png, jpg, jpeg, svg, gif, webp...";
   }
 
-  // Here we return null becuase if the file size is less than 2MB AND it include in the supportedMime type then return "null"
+  // Agar file size 2MB se kam hai aur type supported types mein hai, toh null return karega (no error)
   return null;
 };
 
-// This function convert bytes to MB
+// Ye function bytes ko MB mein convert karta hai
 export const bytesToMb = (bytes) => {
   return bytes / (1024 * 1024);
 };
 
+// Ye function ek random number generate karta hai
 export const generateRandomNum = () => {
   return uuidv4();
 };
