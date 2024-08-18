@@ -31,13 +31,19 @@ export const generateRandomNum = () => {
   return uuidv4();
 };
 
+// `getImageUrl` ek utility function hai jo image ka full URL generate karta hai
 export const getImageUrl = (imgName) => {
+  // Ye line base URL le rahi hai from environment variable `process.env.APP_URL` 
+  // aur uske aage `/images/` path aur image ka naam jod kar full URL banati hai
   return `${process.env.APP_URL}/images/${imgName}`;
 };
 
+// `removeImage` function image ko delete karne ke liye hai
 export const removeImage = (imageName) => {
+  // Image ka path generate kar rahe hain using `process.cwd()`
   const path = process.cwd() + "/public/images/" + imageName;
 
+  // Agar image path exist karta hai toh usko delete karne ke liye `fs.unlinkSync` ka use kar rahe hain
   if (fs.existsSync(path)) {
     fs.unlinkSync(path);
   }
