@@ -7,6 +7,8 @@ import vine from "@vinejs/vine";
 import bcrypt from "bcrypt";
 
 import jwt from "jsonwebtoken";
+import { sendEmail } from "../config/mailer.js";
+import logger from "../config/logger.js";
 
 class AuthController {
   // Static async function "register" banaya gaya hai jo "req" aur "res" ko handle karega
@@ -155,6 +157,45 @@ class AuthController {
           // Generic error message
         });
       }
+    }
+  }
+
+  // Send Test Email function define kar rahe hain
+  static async sendTestEmail(req, res) {
+    try {
+      // Request se email parameter ko extract kar rahe hain
+      const { email } = req.query;
+
+      // Payload object bana rahe hain jo email ke details ko store karega
+      const payload = {
+        toEmail: email, // Recipient ka email address
+        subject: "Hey I am just testing...", // Email ka subject
+        body: "<h1>Hello, I am from Mathura</h1>", // Email ka pehla HTML body content
+        body1: "<h1>Hello Mohit Soni</h1>", // Email ka doosra HTML body content
+      };
+
+      // sendEmail function ko call karke pehla email send kar rahe hain
+      await sendEmail(payload.toEmail, payload.subject, payload.body);
+
+      // sendEmail function ko call karke doosra email send kar rahe hain
+      await sendEmail(payload.toEmail, "Second Email", payload.body1);
+
+      // Agar emails successfully send ho jate hain, toh response mai success message bhej rahe hain
+      return res.status(200).json({
+        status: 200,
+        message: "Email Sent",
+      });
+    } catch (error) {
+      // Agar koi error aati hai, toh usko logger ke through error log kar rahe hain
+      logger.error({
+        type: "Email Error", // Error type define kar rahe hain
+        body: error, // Error ka actual content log kar rahe hain
+      });
+
+      // Response mai error message bhej rahe hain agar email bhejne mai koi problem hui
+      return res.status(500).json({
+        message: "Something went wrong. Please try again later",
+      });
     }
   }
 }
