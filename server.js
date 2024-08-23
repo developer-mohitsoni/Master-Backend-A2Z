@@ -41,6 +41,10 @@ import logger from "./config/logger.js";
 
 app.use("/api", ApiRoutes);
 
+// Jobs import
+
+import "./jobs/index.js"
+
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
