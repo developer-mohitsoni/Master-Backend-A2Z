@@ -26,7 +26,7 @@ app.use(express.static("public"));
 app.use(fileUpload());
 app.use(helmet());
 app.use(cors());
-app.use(limitter)
+app.use(limitter);
 
 app.get("/", (req, res) => {
   return res.json({
@@ -37,8 +37,13 @@ app.get("/", (req, res) => {
 // Import Routes
 
 import ApiRoutes from "./routes/api.js";
+import logger from "./config/logger.js";
 
 app.use("/api", ApiRoutes);
+
+//* Logger
+
+logger.error("Hey I am just Testing");
 
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
