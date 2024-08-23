@@ -11,6 +11,7 @@ import {
 } from "../utils/helper.js";
 import newsApiTransform from "../transform/newsAPITransform.js";
 import redisCache from "../DB/redis.config.js";
+import logger from "../config/logger.js";
 
 class NewsController {
   static async index(req, res) {
@@ -132,8 +133,9 @@ class NewsController {
         news, // Created news object
       });
     } catch (error) {
-      // Agar koi error aata hai toh error message ke saath response return karte hain
-      console.log("The error is: ", error);
+      //* Logger
+      // Logger file ko import karke logg ka error show karwa rahe hai inside error.log file mai
+      logger.error(error?.message);
 
       // Agar validation error aata hai toh usko handle karte hain
       if (error instanceof errors.E_VALIDATION_ERROR) {
