@@ -9,6 +9,7 @@ import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import { sendEmail } from "../config/mailer.js";
 import logger from "../config/logger.js";
+import { emailQueue, emailQueueName } from "../jobs/SendEmailJob.js";
 
 class AuthController {
   // Static async function "register" banaya gaya hai jo "req" aur "res" ko handle karega
@@ -160,39 +161,46 @@ class AuthController {
     }
   }
 
-  // Send Test Email function define kar rahe hain
   static async sendTestEmail(req, res) {
     try {
-      // Request se email parameter ko extract kar rahe hain
+      // URL se email query parameter ko nikal raha hai
       const { email } = req.query;
 
-      // Payload object bana rahe hain jo email ke details ko store karega
-      const payload = {
-        toEmail: email, // Recipient ka email address
-        subject: "Hey I am just testing...", // Email ka subject
-        body: "<h1>Hello, I am from Mathura</h1>", // Email ka pehla HTML body content
-        body1: "<h1>Hello Mohit Soni</h1>", // Email ka doosra HTML body content
-      };
+      // Email bhejne ke liye ek payload banaya hai, jisme multiple emails hain
+      const payload = [
+        {
+          toEmail: email, // Email jisko bhejna hai
+          subject: "Hey I am just testing...", // Email ka subject
+          body: "<h1>Hello, I am from Mathura</h1>", // Email ka content (HTML format)
+        },
+        {
+          toEmail: email, // Same email address
+          subject: "Congrulation you got job offer", // Email ka subject
+          body: "<h1>Hello Mohit you join our company as Software Developer</h1>", // Email ka content
+        },
+        {
+          toEmail: email, // Same email address
+          subject: "Finally I started as a Freelancer", // Email ka subject
+          body: "<h1>I am happy to see you, I love you</h1>", // Email ka content
+        },
+      ];
 
-      // sendEmail function ko call karke pehla email send kar rahe hain
-      await sendEmail(payload.toEmail, payload.subject, payload.body);
+      // Email queue mein payload add kar raha hai
+      await emailQueue.add(emailQueueName, payload);
 
-      // sendEmail function ko call karke doosra email send kar rahe hain
-      await sendEmail(payload.toEmail, "Second Email", payload.body1);
-
-      // Agar emails successfully send ho jate hain, toh response mai success message bhej rahe hain
+      // Agar sab kuch sahi hai toh 200 status code ke saath success message return kar raha hai
       return res.status(200).json({
         status: 200,
-        message: "Email Sent",
+        message: "Job added successfully",
       });
     } catch (error) {
-      // Agar koi error aati hai, toh usko logger ke through error log kar rahe hain
+      // Agar error aata hai toh usko log kar raha hai
       logger.error({
-        type: "Email Error", // Error type define kar rahe hain
-        body: error, // Error ka actual content log kar rahe hain
+        type: "Email Error", // Error type specify kar raha hai
+        body: error, // Error details log kar raha hai
       });
 
-      // Response mai error message bhej rahe hain agar email bhejne mai koi problem hui
+      // Agar kuch galat hota hai toh 500 status code ke saath error message return kar raha hai
       return res.status(500).json({
         message: "Something went wrong. Please try again later",
       });
