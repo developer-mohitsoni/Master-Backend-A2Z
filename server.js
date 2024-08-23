@@ -41,10 +41,6 @@ import logger from "./config/logger.js";
 
 app.use("/api", ApiRoutes);
 
-//* Logger
-
-logger.error("Hey I am just Testing");
-
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
