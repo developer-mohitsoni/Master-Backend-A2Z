@@ -36,7 +36,7 @@ const authMiddleware = (req, res, next) => {
     }
 
     // Yahan pe verify hone ke baad user ki information ko request object mein store kar rahe hain
-    req.user = user;
+    req.user = user; // req.user => Contains the authenticated user data (set by authentication middleware).
   });
 
   // Yeh next middleware ko call karta hai, yani ki agle function ko execute karega
