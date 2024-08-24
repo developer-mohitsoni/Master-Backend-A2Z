@@ -7,7 +7,7 @@ class ProfileController {
   static async index(req, res) {
     try {
       // Jab humne JWT token create kiya tha, us time jo data (payload) usme pass kiya tha, woh data ab req.user mein available hai
-      const user = req.user;
+      const user = req.user; // req.user => Contains the authenticated user data (set by authentication middleware).
 
       // Agar user ka data mil jata hai, toh successful response ke saath user ka data return karte hain
       return res.json({
@@ -36,6 +36,7 @@ class ProfileController {
       const { id } = req.params;
 
       // Agar request mein files nahi hain ya files ka object empty hai, toh error message ke saath response return karo
+      // Here:- req.files => Contains files uploaded by the client
       if (!req.files || Object.keys(req.files).length === 0) {
         return res.status(400).json({
           status: 400, // Status code 400: Bad Request
@@ -44,22 +45,22 @@ class ProfileController {
       }
 
       // Profile image ko req.files se extract karte hain
-      const profile = req.files.profile;
+      const profileImage = req.files.profile;
 
       // ImageValidator function ko call karte hain jo image ke size aur mimetype ko check karega
-      const message = imageValidator(profile.size, profile.mimetype);
+      const message = imageValidator(profileImage.size, profileImage.mimetype);
 
       // Agar message null nahi hai, yani image valid nahi hai, toh error message ke saath response return karo
       if (message !== null) {
         return res.status(400).json({
           errors: {
-            profile: message, // Invalid image ka error message
+            profileImage: message, // Invalid image ka error message
           },
         });
       }
 
       // Profile image ke naam ko split karke uska extension nikal rahe hain
-      const imgExt = profile?.name.split(".");
+      const imgExt = profileImage?.name.split(".");
 
       // Random number generate karke uska extension add karke image ka naya naam bana rahe hain
       const imageName = generateRandomNum() + "." + imgExt[1];
@@ -68,7 +69,7 @@ class ProfileController {
       const uploadPath = process.cwd() + "/public/images/" + imageName;
 
       // Image ko specified directory mein move karte hain, agar error aaya toh throw karenge
-      profile.mv(uploadPath, (err) => {
+      profileImage.mv(uploadPath, (err) => {
         if (err) throw err;
       });
 
