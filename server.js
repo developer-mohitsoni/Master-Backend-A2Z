@@ -6,6 +6,7 @@ const app = express();
 
 import fileUpload from "express-fileupload";
 
+// offers middleware capabilities to secure HTTP headers in HTTP responses
 import helmet from "helmet";
 
 import cors from "cors";
