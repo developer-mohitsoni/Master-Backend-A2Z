@@ -136,11 +136,13 @@ class AuthController {
       }
 
       // Agar user database mein nahi milta toh error return karte hain
-      return res.status(400).json({
-        errors: {
-          email: "No User Found", // User nahi mila message
-        },
-      });
+      if (!findUser) {
+        return res.status(400).json({
+          errors: {
+            email: "No User Found", // User nahi mila message
+          },
+        });
+      }
     } catch (error) {
       // Agar koi error aata hai toh usko console mein log karte hain
       console.log("The error is: ", error);
