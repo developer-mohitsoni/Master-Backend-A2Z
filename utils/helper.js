@@ -1,6 +1,9 @@
 // Import supportedMimes that contains the supported file information required to upload
 import { supportedMimes } from "../config/filesystem.js";
 
+import fs from "node:fs";
+import path from "node:path";
+
 // Import uuid package for generating unique id of each image
 import { v4 as uuidv4 } from "uuid";
 
