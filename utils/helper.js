@@ -73,7 +73,7 @@ export const uploadImage = (image) => {
   }
 
   // Define the upload path for the image
-  const uploadPath = path.join(uploadFolder, profile.name);
+  const uploadPath = path.join(uploadFolder, imageName);
 
   // Move the uploaded file to the folder
   image.mv(uploadPath, (err) => {
