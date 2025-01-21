@@ -72,7 +72,7 @@ class NewsController {
 
   static async store(req, res) {
     try {
-      // req.user se logged-in user ki information nikal rahe hain
+      // req.user se logged-in user ki information nikal rahe hain (accessing private route access data)
       const user = req.user;
 
       // req.body se request ka data (form data) nikal rahe hain
