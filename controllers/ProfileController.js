@@ -65,8 +65,19 @@ class ProfileController {
       // Random number generate karke uska extension add karke image ka naya naam bana rahe hain
       const imageName = generateRandomNum() + "." + imgExt[1];
 
-      // Upload path set kar rahe hain jahan image ko save karna hai
-      const uploadPath = process.cwd() + "/public/images/" + imageName;
+      // Get the current directory
+      const currentDirectory = process.cwd();
+
+      // Define the folder path where the image will be uploaded
+      const uploadFolder = path.join(currentDirectory, "public/images");
+
+      // Ensure the folder exists, create it if it doesn't
+      if (!fs.existsSync(uploadFolder)) {
+        fs.mkdirSync(uploadFolder, { recursive: true });
+      }
+
+      // Define the upload path for the image
+      const uploadPath = path.join(uploadFolder, profile.name);
 
       // Image ko specified directory mein move karte hain, agar error aaya toh throw karenge
       profileImage.mv(uploadPath, (err) => {
