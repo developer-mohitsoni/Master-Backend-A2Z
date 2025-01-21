@@ -1,4 +1,6 @@
 import prisma from "../DB/db.config.js";
+import fs from "node:fs";
+import path from "node:path";
 
 import { generateRandomNum, imageValidator } from "../utils/helper.js";
 
@@ -77,11 +79,15 @@ class ProfileController {
       }
 
       // Define the upload path for the image
-      const uploadPath = path.join(uploadFolder, profile.name);
+      const uploadPath = path.join(uploadFolder, imageName);
 
-      // Image ko specified directory mein move karte hain, agar error aaya toh throw karenge
-      profileImage.mv(uploadPath, (err) => {
-        if (err) throw err;
+      // Move the uploaded file to the folder
+      profile.mv(uploadPath, (err) => {
+        if (err) {
+          console.error("Error uploading the image:", err);
+          throw err;
+        }
+        console.log("Image uploaded successfully to:", uploadPath);
       });
 
       // User ke profile ko database mein update karte hain nayi image ke naam ke saath
