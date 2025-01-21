@@ -26,7 +26,7 @@ model Users {
 
 model News {
   id         Int      @id @default(autoincrement())
-  user_id    Int
+  user_id    Int // If the above user have the id of type string so on that case we have to provide News user_id "String" type
   user       Users    @relation(fields: [user_id], references: [id])
   title      String   @db.VarChar(200)
   content    String
