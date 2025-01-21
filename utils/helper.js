@@ -33,7 +33,7 @@ export const generateRandomNum = () => {
 
 // `getImageUrl` ek utility function hai jo image ka full URL generate karta hai
 export const getImageUrl = (imgName) => {
-  // Ye line base URL le rahi hai from environment variable `process.env.APP_URL` 
+  // Ye line base URL le rahi hai from environment variable `process.env.APP_URL`
   // aur uske aage `/images/` path aur image ka naam jod kar full URL banati hai
   return `${process.env.APP_URL}/images/${imgName}`;
 };
@@ -58,11 +58,27 @@ export const uploadImage = (image) => {
   // This will contains the randomnumber with profile image extension as:- 545542.img, 5453154.wbpeg, 54240.jpeg etc.
   const imageName = generateRandomNum() + "." + imgExt[1];
 
-  // Now this will upload our image in the given directory
-  const uploadPath = process.cwd() + "/public/images/" + imageName;
+  // Get the current directory
+  const currentDirectory = process.cwd();
 
+  // Define the folder path where the image will be uploaded
+  const uploadFolder = path.join(currentDirectory, "public/images");
+
+  // Ensure the folder exists, create it if it doesn't
+  if (!fs.existsSync(uploadFolder)) {
+    fs.mkdirSync(uploadFolder, { recursive: true });
+  }
+
+  // Define the upload path for the image
+  const uploadPath = path.join(uploadFolder, profile.name);
+
+  // Move the uploaded file to the folder
   image.mv(uploadPath, (err) => {
-    if (err) throw err;
+    if (err) {
+      console.error("Error uploading the image:", err);
+      throw err;
+    }
+    console.log("Image uploaded successfully to:", uploadPath);
   });
 
   return imageName;
