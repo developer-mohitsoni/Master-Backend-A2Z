@@ -7,8 +7,6 @@ import path from "node:path";
 // Import uuid package for generating unique id of each image
 import { v4 as uuidv4 } from "uuid";
 
-import fs from "fs";
-
 // Ye function image ko validate karne ke liye use hota hai jo size aur mime type ko check karta hai
 export const imageValidator = (size, mime) => {
   // Agar file ka size 2MB se zyada hai toh error message return karega
