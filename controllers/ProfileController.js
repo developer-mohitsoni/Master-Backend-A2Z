@@ -43,6 +43,11 @@ class ProfileController {
 
       // Agar request mein files nahi hain ya files ka object empty hai, toh error message ke saath response return karo
       // Here:- req.files => Contains files uploaded by the client
+
+      console.log(req.files);
+      console.log("----------------------------------- \n");
+      console.log(Object.keys(req.files).length);
+
       if (!req.files || Object.keys(req.files).length === 0) {
         return res.status(400).json({
           status: 400, // Status code 400: Bad Request
@@ -67,6 +72,7 @@ class ProfileController {
 
       // Profile image ke naam ko split karke uska extension nikal rahe hain
       const imgExt = profileImage?.name.split(".");
+      console.log(imgExt);
 
       // Random number generate karke uska extension add karke image ka naya naam bana rahe hain
       const imageName = generateRandomNum() + "." + imgExt[1];
@@ -86,7 +92,7 @@ class ProfileController {
       const uploadPath = path.join(uploadFolder, imageName);
 
       // Move the uploaded file to the folder
-      profile.mv(uploadPath, (err) => {
+      profileImage.mv(uploadPath, (err) => {
         if (err) {
           console.error("Error uploading the image:", err);
           throw err;
