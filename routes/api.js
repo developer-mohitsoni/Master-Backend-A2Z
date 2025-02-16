@@ -16,6 +16,7 @@ router.get("/send-email", AuthController.sendTestEmail);
 
 //*  Profile routes
 
+// Verify karte time mujhe ye bta raha hai ki kis user ne mujhe request bheji hai taaki mai ussi user ke perspective se sirf ussi user ka data process karu.
 router.get("/profile", authMiddleware, ProfileController.index); //! Private Route
 router.put("/profile/:id", authMiddleware, ProfileController.update); //! Private Route
 

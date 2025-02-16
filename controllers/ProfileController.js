@@ -9,7 +9,11 @@ class ProfileController {
   static async index(req, res) {
     try {
       // Jab humne JWT token create kiya tha, us time jo data (payload) usme pass kiya tha, woh data ab req.user mein available hai
+
+      // Verify karte time mujhe ye bta raha hai ki kis user ne mujhe request bheji hai taaki mai ussi user ke perspective se sirf ussi user ka data process karu.
       const user = req.user; // req.user => Contains the authenticated user data (set by authentication middleware).
+
+      console.log(user);
 
       // Agar user ka data mil jata hai, toh successful response ke saath user ka data return karte hain
       return res.json({
