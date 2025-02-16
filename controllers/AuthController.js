@@ -115,6 +115,8 @@ class AuthController {
         // Agar email aur password match kar jate hain, tab yeh code chalega
 
         // User ko token assign karte hain agar login successful ho jata hai
+
+        // Ye database mai jo data match kar gya hai ye uska data hai.
         const payloadData = {
           id: findUser.id,
           name: findUser.name,
