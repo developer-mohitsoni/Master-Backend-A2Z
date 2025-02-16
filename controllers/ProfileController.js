@@ -38,9 +38,25 @@ class ProfileController {
   // To update something from DB
   static async update(req, res) {
     try {
+      // ✅ Check kar lo ki req.user exist karta hai
+      if (!req.user) {
+        return res.status(401).json({ message: "Unauthorized" });
+      }
+
+      console.log("User Info:", req.user); // Debugging ke liye
+
+      // JWT se aaya user ka ID
+      const userIdFromToken = req.user.id;
+
       // Ye id ko extract kar raha hai jo URL ke params mein se mil rahi hai
       const { id } = req.params;
 
+      // ✅ Ensure user is updating their own profile (Extra Security)
+      if (Number(userIdFromToken) !== Number(id)) {
+        return res
+          .status(403)
+          .json({ message: "You can only update your own profile" });
+      }
       // Agar request mein files nahi hain ya files ka object empty hai, toh error message ke saath response return karo
       // Here:- req.files => Contains files uploaded by the client
 
