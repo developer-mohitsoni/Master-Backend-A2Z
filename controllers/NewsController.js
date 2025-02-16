@@ -18,7 +18,7 @@ class NewsController {
     // Query parameters se `page` ki value nikal rahe hain, agar nahi mili toh default 1 set kar rahe hain.
     const page = Number(req.query.page) || 1;
     // Query parameters se `limit` ki value nikal rahe hain, agar nahi mili toh default 10 set kar rahe hain.
-    const limit = Number(req.query.page) || 10;
+    const limit = Number(req.query.limit) || 10;
 
     // Agar page ki value 0 ya usse kam hai, toh `page` ko 1 set kar dete hain.
     if (page <= 0) {
@@ -83,6 +83,7 @@ class NewsController {
 
       // body data ko validate kar rahe hain validator ke through
       const payload = await validator.validate(body);
+      console.log(payload);
 
       // Agar request mein koi file nahi hai ya files ka object empty hai, toh error message ke saath response return karo
       if (!req.files || Object.keys(req.files).length === 0) {
@@ -112,8 +113,11 @@ class NewsController {
       const imageName = uploadImage(image);
 
       // Payload mein image ka naam aur user ID add kar rahe hain ki kiss user ne ye news create kari hai
-      payload.image = imageName;
-      payload.user_id = user.id;
+      console.log(payload.image);
+      payload.image = imageName; // or ye hum image store kara rahe hai payload mai sirf bss
+
+      console.log(payload.user_id);
+      payload.user_id = user.id; // Ye jiss user nai meri image ko store kara hai ye wo hai uski id
 
       // Database mein news entry create kar rahe hain validated payload ke saath
       const news = await prisma.news.create({
