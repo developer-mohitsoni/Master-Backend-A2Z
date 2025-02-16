@@ -38,6 +38,8 @@ const authMiddleware = (req, res, next) => {
     console.log(user);
 
     // Yahan pe verify hone ke baad user ki information ko request object mein store kar rahe hain
+
+    // Verify karte time mujhe ye bta raha hai ki kis user ne mujhe request bheji hai taaki mai ussi user ke perspective se sirf ussi user ka data process karu. "issliye mai yahan req.user likk raha hu"
     req.user = user; // req.user => Contains the authenticated user data (set by authentication middleware).
 
     console.log(req.user);
