@@ -47,6 +47,10 @@ class NewsController {
           },
         },
       },
+      cacheStrategy: {
+        swr: 60,
+        ttl: 60,
+      },
     });
 
     // Har news item ko transform kar rahe hain using `newsApiTransform.transform`

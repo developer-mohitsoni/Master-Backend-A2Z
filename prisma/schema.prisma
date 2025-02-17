@@ -15,8 +15,8 @@ datasource db {
 
 model Users {
   id         Int      @id @default(autoincrement())
-  name       String   @db.VarChar(191)
-  email      String   @unique @db.VarChar(191)
+  name       String
+  email      String   @unique
   password   String
   profile    String?
   created_at DateTime @default(now())
@@ -28,9 +28,9 @@ model News {
   id         Int      @id @default(autoincrement())
   user_id    Int // If the above user have the id of type string so on that case we have to provide News user_id "String" type "This is which user "konsa user iss News ko update kar skta hai uss case ke liye""
   user       Users    @relation(fields: [user_id], references: [id])
-  title      String   @db.VarChar(200)
+  title      String
   content    String
-  image      String   @db.VarChar(100)
+  image      String
   created_at DateTime @default(now())
   updated_at DateTime @default(now())
 }
