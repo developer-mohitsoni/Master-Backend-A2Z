@@ -10,15 +10,15 @@ import {
   uploadImage,
 } from "../utils/helper.js";
 import newsApiTransform from "../transform/newsAPITransform.js";
-import redisCache from "../DB/redis.config.js";
 import logger from "../config/logger.js";
+import redis from "../DB/redis.config.js";
 
 class NewsController {
   static async index(req, res) {
     // Query parameters se `page` ki value nikal rahe hain, agar nahi mili toh default 1 set kar rahe hain.
-    const page = Number(req.query.page) || 1;
+    let page = Number(req.query.page) || 1;
     // Query parameters se `limit` ki value nikal rahe hain, agar nahi mili toh default 10 set kar rahe hain.
-    const limit = Number(req.query.limit) || 10;
+    let limit = Number(req.query.limit) || 10;
 
     // Agar page ki value 0 ya usse kam hai, toh `page` ko 1 set kar dete hain.
     if (page <= 0) {
@@ -126,9 +126,14 @@ class NewsController {
 
       //* remove cache
 
-      redisCache.del("/api/news", (err) => {
-        if (err) throw err;
-      });
+      // console.log(req.originalUrl);
+
+      const cacheKeyPattern = `master_backend:/api/news*`; // Pattern for deleting cache
+
+      const keys = await redis.keys(cacheKeyPattern); // Get all cache keys matching the pattern
+      if (keys.length > 0) {
+        await redis.del(keys); // Delete all matching cache keys
+      }
 
       // Success message ke saath response return karte hain agar sab kuch sahi raha
       return res.json({
@@ -255,6 +260,15 @@ class NewsController {
         },
       });
 
+      // console.log(req.originalUrl);
+
+      const cacheKeyPattern = `master_backend:/api/news*`; // Pattern for deleting cache
+
+      const keys = await redis.keys(cacheKeyPattern); // Get all cache keys matching the pattern
+      if (keys.length > 0) {
+        await redis.del(keys); // Delete all matching cache keys
+      }
+
       // Update successful hone par success message ke saath response return karte hain
       return res.status(200).json({
         message: "News Updated Successfully", // Success message
@@ -308,6 +322,15 @@ class NewsController {
           id: Number(id), // ID se news item ko identify karte hain
         },
       });
+
+      // console.log(req.originalUrl);
+
+      const cacheKeyPattern = `master_backend:/api/news*`; // Pattern for deleting cache
+
+      const keys = await redis.keys(cacheKeyPattern); // Get all cache keys matching the pattern
+      if (keys.length > 0) {
+        await redis.del(keys); // Delete all matching cache keys
+      }
 
       // Delete successful hone par success message ke saath response return karte hain
       return res.status(200).json({

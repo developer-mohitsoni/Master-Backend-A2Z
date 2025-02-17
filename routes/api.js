@@ -5,7 +5,7 @@ import ProfileController from "../controllers/ProfileController.js";
 import authMiddleware from "../middleware/Authenticate.js";
 import NewsController from "../controllers/NewsController.js";
 // Redis cache ko import kar rahe hain configuration file se
-import redisCache from "../DB/redis.config.js";
+import cacheMiddleware from "../config/redisCache.js";
 
 const router = Router();
 
@@ -23,10 +23,10 @@ router.put("/profile/:id", authMiddleware, ProfileController.update); //! Privat
 //* News routes
 
 // Yahan par '/news' route ko Redis cache ke saath connect kar rahe hain aur 'NewsController.index' ko handle karne ke liye use kar rahe hain
-router.get("/news", redisCache.route(), NewsController.index);
-router.post("/news", authMiddleware, NewsController.store);
-router.get("/news/:id", NewsController.show);
-router.put("/news/:id", authMiddleware, NewsController.update);
-router.delete("/news/:id", authMiddleware, NewsController.destroy);
+router.get("/news", cacheMiddleware, NewsController.index); // data cache karna
+router.post("/news", authMiddleware, NewsController.store); // data invalidate karna
+router.get("/news/:id", cacheMiddleware, NewsController.show); // data cache karna
+router.put("/news/:id", authMiddleware, NewsController.update); // data invalidate karna
+router.delete("/news/:id", authMiddleware, NewsController.destroy); // data invalidate karna
 
 export default router;
