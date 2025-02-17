@@ -15,63 +15,71 @@ import redis from "../DB/redis.config.js";
 
 class NewsController {
   static async index(req, res) {
-    // Query parameters se `page` ki value nikal rahe hain, agar nahi mili toh default 1 set kar rahe hain.
-    let page = Number(req.query.page) || 1;
-    // Query parameters se `limit` ki value nikal rahe hain, agar nahi mili toh default 10 set kar rahe hain.
-    let limit = Number(req.query.limit) || 10;
+    try {
+      // Query parameters se `page` ki value nikal rahe hain, agar nahi mili toh default 1 set kar rahe hain.
+      let page = Number(req.query.page) || 1;
+      // Query parameters se `limit` ki value nikal rahe hain, agar nahi mili toh default 10 set kar rahe hain.
+      let limit = Number(req.query.limit) || 10;
 
-    // Agar page ki value 0 ya usse kam hai, toh `page` ko 1 set kar dete hain.
-    if (page <= 0) {
-      page = 1;
-    }
+      // Agar page ki value 0 ya usse kam hai, toh `page` ko 1 set kar dete hain.
+      if (page <= 0) {
+        page = 1;
+      }
 
-    // Agar limit 0 ya usse kam hai ya 100 se zyada hai, toh `limit` ko 10 set kar dete hain.
-    if (limit <= 0 || limit > 100) {
-      limit = 10;
-    }
+      // Agar limit 0 ya usse kam hai ya 100 se zyada hai, toh `limit` ko 10 set kar dete hain.
+      if (limit <= 0 || limit > 100) {
+        limit = 10;
+      }
 
-    // Pagination ke liye skip calculate kar rahe hain. `skip` ka matlab hai kitne records ko skip karna hai.
-    const skip = (page - 1) * limit;
+      // Pagination ke liye skip calculate kar rahe hain. `skip` ka matlab hai kitne records ko skip karna hai.
+      const skip = (page - 1) * limit;
 
-    // Database se news fetch kar rahe hain. `limit` ke hisaab se news fetch hogi aur `skip` ke hisaab se records skip karenge.
-    const news = await prisma.news.findMany({
-      take: limit, // Kitne records fetch karne hain
-      skip: skip, // Kitne records skip karne hain
-      include: {
-        // Related user information bhi fetch kar rahe hain.
-        user: {
-          select: {
-            id: true, // User ki ID
-            name: true, // User ka naam
-            profile: true, // User ka profile
+      // Database se news fetch kar rahe hain. `limit` ke hisaab se news fetch hogi aur `skip` ke hisaab se records skip karenge.
+      const news = await prisma.news.findMany({
+        take: limit, // Kitne records fetch karne hain
+        skip: skip, // Kitne records skip karne hain
+        include: {
+          // Related user information bhi fetch kar rahe hain.
+          user: {
+            select: {
+              id: true, // User ki ID
+              name: true, // User ka naam
+              profile: true, // User ka profile
+            },
           },
         },
-      },
-      cacheStrategy: {
-        swr: 60,
-        ttl: 60,
-      },
-    });
+        cacheStrategy: {
+          swr: 60,
+          ttl: 60,
+        },
+      });
 
-    // Har news item ko transform kar rahe hain using `newsApiTransform.transform`
-    const newsTransform = news?.map((item) => newsApiTransform.transform(item));
+      // Har news item ko transform kar rahe hain using `newsApiTransform.transform`
+      const newsTransform = news?.map((item) =>
+        newsApiTransform.transform(item)
+      );
 
-    // Total news ka count fetch kar rahe hain.
-    const totalNews = await prisma.news.count();
+      // Total news ka count fetch kar rahe hain.
+      const totalNews = await prisma.news.count();
 
-    // Total pages calculate kar rahe hain based on total news and limit.
-    const totalPages = Math.ceil(totalNews / limit);
+      // Total pages calculate kar rahe hain based on total news and limit.
+      const totalPages = Math.ceil(totalNews / limit);
 
-    // Response return kar rahe hain jisme transformed news, total pages, current page aur current limit included hain.
-    return res.json({
-      status: 200, // Success status
-      news: newsTransform, // Transformed news data
-      metadata: {
-        totalPages, // Total pages ka count
-        currentPage: page, // Current page number
-        currentLimit: limit, // Current limit (kitne records fetch kar rahe hain)
-      },
-    });
+      // Response return kar rahe hain jisme transformed news, total pages, current page aur current limit included hain.
+      return res.json({
+        status: 200, // Success status
+        news: newsTransform, // Transformed news data
+        metadata: {
+          totalPages, // Total pages ka count
+          currentPage: page, // Current page number
+          currentLimit: limit, // Current limit (kitne records fetch kar rahe hain)
+        },
+      });
+    } catch (error) {
+      //* Logger
+      // Logger file ko import karke logg ka error show karwa rahe hai inside error.log file mai
+      logger.error(error?.message);
+    }
   }
 
   static async store(req, res) {
@@ -196,6 +204,9 @@ class NewsController {
         news: transformNews, // Transformed news data ya null
       });
     } catch (error) {
+      //* Logger
+      // Logger file ko import karke logg ka error show karwa rahe hai inside error.log file mai
+      logger.error(error?.message);
       // Agar koi error aata hai toh error message ke saath response return karte hain
       return res.status(500).json({
         message: "Something Went Wrong... Please try again", // Error message
@@ -278,7 +289,9 @@ class NewsController {
         message: "News Updated Successfully", // Success message
       });
     } catch (error) {
-      console.log("The error is: ", error);
+      //* Logger
+      // Logger file ko import karke logg ka error show karwa rahe hai inside error.log file mai
+      logger.error(error?.message);
 
       // Validation error aane par error messages ke saath response return karenge
       if (error instanceof errors.E_VALIDATION_ERROR) {
@@ -341,6 +354,9 @@ class NewsController {
         message: "News Deleted Successfully", // Success message
       });
     } catch (error) {
+      //* Logger
+      // Logger file ko import karke logg ka error show karwa rahe hai inside error.log file mai
+      logger.error(error?.message);
       // Koi error aane par 500 status ke saath error message return karenge
       return res.status(500).json({
         status: 500,
