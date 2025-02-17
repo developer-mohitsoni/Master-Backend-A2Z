@@ -176,6 +176,7 @@ class NewsController {
     try {
       // URL se `id` ko nikal rahe hain jo humne params ke through pass kiya hai
       const { id } = req.params;
+      console.log(id);
 
       // Database se unique news item ko fetch karne ke liye `prisma.news.findUnique` method ka use kar rahe hain
       const news = await prisma.news.findUnique({

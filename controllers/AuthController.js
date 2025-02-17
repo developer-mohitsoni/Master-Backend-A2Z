@@ -7,7 +7,7 @@ import vine from "@vinejs/vine";
 import bcrypt from "bcrypt";
 
 import jwt from "jsonwebtoken";
-import { sendEmail } from "../config/mailer.js";
+
 import logger from "../config/logger.js";
 import { emailQueue, emailQueueName } from "../jobs/SendEmailJob.js";
 
@@ -169,6 +169,7 @@ class AuthController {
     try {
       // URL se email query parameter ko nikal raha hai
       const { email } = req.query;
+      console.log(email);
 
       // Email bhejne ke liye ek payload banaya hai, jisme multiple emails hain
       const payload = [
