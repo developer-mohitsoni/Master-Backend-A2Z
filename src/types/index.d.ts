@@ -10,6 +10,19 @@ export interface User {
 	updated_at: Date;
 }
 
+export interface News {
+	id: number;
+	title: string;
+	content: string;
+	image: string;
+	created_at: Date;
+	user: {
+		id: number;
+		name: string;
+		profile?: string | null;
+	};
+}
+
 export interface MyJwtPayload extends JwtPayload {
 	userId: string;
 	name: string;
