@@ -271,6 +271,10 @@ class NewsController {
 			const news = await prisma.news.findUnique({
 				where: {
 					id: Number(id)
+				},
+				select: {
+					user_id: true,
+					image: true
 				}
 			});
 
