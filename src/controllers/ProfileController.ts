@@ -113,6 +113,11 @@ class ProfileController {
 				},
 				where: {
 					id: Number(id)
+				},
+				select: {
+					created_at: true,
+					profile: true,
+					email: true
 				}
 			});
 
