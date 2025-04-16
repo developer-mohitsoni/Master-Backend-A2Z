@@ -37,7 +37,16 @@ class AuthController {
 				payload.password = await bcrypt.hash(payload.password, salt);
 
 				const user = await prisma.users.create({
-					data: payload
+					data: {
+						name: payload.name,
+						email: payload.email,
+						password: payload.password
+					},
+					select: {
+						password: true,
+						name: true,
+						profile: true
+					}
 				});
 
 				return res.json({
