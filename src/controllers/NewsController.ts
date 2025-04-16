@@ -118,6 +118,11 @@ class NewsController {
 							id: Number(payload.userId)
 						}
 					}
+				},
+				select: {
+					image: true,
+					content: true,
+					created_at: true
 				}
 			});
 
