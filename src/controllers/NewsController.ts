@@ -32,7 +32,6 @@ class NewsController {
 					}
 				},
 				cacheStrategy: {
-					strategy: "redis",
 					ttl: 60 // 1 seconds
 				}
 			});
