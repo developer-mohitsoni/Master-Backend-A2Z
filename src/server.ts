@@ -15,7 +15,7 @@ import helmet from "helmet";
 
 import cors from "cors";
 
-// import { limitter } from "./config/ratelimiter.js";
+import { limitter } from "./config/ratelimiter.js";
 
 const PORT = process.env.PORT || 3000;
 
@@ -32,7 +32,7 @@ app.use(express.static("public"));
 app.use(fileUpload());
 app.use(helmet());
 app.use(cors());
-// app.use(limitter);
+app.use(limitter);
 
 app.get("/", (req: Request, res: Response) => {
 	res.json({
@@ -40,7 +40,7 @@ app.get("/", (req: Request, res: Response) => {
 	});
 });
 
-// Import Routes
+//* Import Routes
 
 import ApiRoutes from "./routes/api.js";
 
@@ -48,7 +48,7 @@ app.use("/api", ApiRoutes);
 
 // Jobs import
 
-// import "./jobs/index.js";
+import "./jobs/index.js";
 
 app.listen(PORT, () => {
 	console.log(`Server running on port ${PORT}`);
