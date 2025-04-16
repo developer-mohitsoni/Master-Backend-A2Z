@@ -1,11 +1,6 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
+  output   = "../generated/prisma"
 }
 
 datasource db {
@@ -26,7 +21,7 @@ model Users {
 
 model News {
   id         Int      @id @default(autoincrement())
-  user_id    Int // If the above user have the id of type string so on that case we have to provide News user_id "String" type "This is which user "konsa user iss News ko update kar skta hai uss case ke liye""
+  user_id    Int
   user       Users    @relation(fields: [user_id], references: [id])
   title      String
   content    String
