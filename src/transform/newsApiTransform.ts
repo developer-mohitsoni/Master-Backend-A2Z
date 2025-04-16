@@ -1,17 +1,6 @@
 import { getImageUrl } from "../utils/helper.js";
 
-interface News {
-	id: number;
-	title: string;
-	content: string;
-	image: string;
-	created_at: Date;
-	user: {
-		id: number;
-		name: string;
-		profile?: string | null;
-	};
-}
+import type { News } from "../types/index.d.ts";
 
 class newsApiTransform {
 	static transform(news: News): object {
