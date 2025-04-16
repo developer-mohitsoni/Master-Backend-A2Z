@@ -9,7 +9,9 @@
     "build": "tsc",
     "server": "wait-on dist/server.js && nodemon ./dist/server.js",
     "watch": "tsc -w",
-    "dev": "concurrently \"npm run watch\" \"npm run server\" \"npm run watch-views\""
+    "dev": "concurrently \"npm run watch\" \"npm run server\" \"npm run watch-views\"",
+    "lint": "biome check src",
+    "format": "biome check --write src"
   },
   "keywords": [],
   "author": "",
@@ -37,6 +39,7 @@
     "winston": "^3.14.2"
   },
   "devDependencies": {
+    "@biomejs/biome": "1.9.4",
     "@types/bcrypt": "^5.0.2",
     "@types/cors": "^2.8.17",
     "@types/express": "^5.0.0",
