@@ -1,7 +1,8 @@
-import vine, { errors } from "@vinejs/vine";
+import { ZodCustomErrorReporter } from "@/validations/CustomErrorReporter.js";
 import type { NextFunction, Request, Response } from "express";
 import type { UploadedFile } from "express-fileupload";
 import type { RequestHandler } from "express-serve-static-core";
+import { ZodError } from "zod";
 import prisma from "../DB/db.config.js";
 import redis from "../DB/redis.config.js";
 import logger from "../config/logger.js";
@@ -78,9 +79,7 @@ class NewsController {
 
 			const body = req.body;
 
-			const validator = vine.compile(newsSchema);
-
-			const payload: ValidateNews = await validator.validate(body);
+			const payload: ValidateNews = await newsSchema.parseAsync(body);
 
 			if (!req.files || Object.keys(req.files).length === 0) {
 				return res.status(400).json({
@@ -142,10 +141,12 @@ class NewsController {
 		} catch (err) {
 			logger.error((err as any)?.message);
 
-			if (err instanceof errors.E_VALIDATION_ERROR) {
-				// Agar validation error aata hai toh usko handle karte hain
-				return res.status(400).json({
-					errors: err.messages // Validation errors
+			if (err instanceof ZodError) {
+				const reporter = new ZodCustomErrorReporter(err);
+
+				return res.status(422).json({
+					status: 422,
+					errors: reporter.createError()
 				});
 			}
 			return res.status(500).json({
@@ -212,9 +213,7 @@ class NewsController {
 				});
 			}
 
-			const validator = vine.compile(newsSchema);
-			const payload: ValidateNews = await validator.validate(body);
-
+			const payload: ValidateNews = await newsSchema.parseAsync(body);
 			const image = req.files?.image as UploadedFile;
 
 			if (image) {
@@ -262,9 +261,12 @@ class NewsController {
 		} catch (err) {
 			logger.error((err as any)?.message);
 
-			if (err instanceof errors.E_VALIDATION_ERROR) {
-				return res.status(400).json({
-					errors: err.messages
+			if (err instanceof ZodError) {
+				const reporter = new ZodCustomErrorReporter(err);
+
+				return res.status(422).json({
+					status: 422,
+					errors: reporter.createError()
 				});
 			}
 

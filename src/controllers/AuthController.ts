@@ -1,8 +1,9 @@
-import vine, { errors } from "@vinejs/vine";
+import { ZodCustomErrorReporter } from "@/validations/CustomErrorReporter.js";
 import bcrypt from "bcrypt";
 import type { NextFunction, Request, Response } from "express";
 import type { RequestHandler } from "express-serve-static-core";
 import jwt from "jsonwebtoken";
+import { ZodError } from "zod";
 import prisma from "../DB/db.config.js";
 import { loginSchema, registerSchema } from "../validations/authValidation.js";
 
@@ -11,9 +12,7 @@ class AuthController {
 		try {
 			const body = req.body;
 
-			const validator = vine.compile(registerSchema);
-
-			const payload = await validator.validate(body);
+			const payload = await registerSchema.parseAsync(body);
 
 			const findUser = await prisma.users.findUnique({
 				where: {
@@ -58,9 +57,12 @@ class AuthController {
 		} catch (err) {
 			console.log("The error is: ", err);
 
-			if (err instanceof errors.E_VALIDATION_ERROR) {
-				return res.status(400).json({
-					errors: err.messages // Validation errors ko return karte hain
+			if (err instanceof ZodError) {
+				const reporter = new ZodCustomErrorReporter(err);
+
+				return res.status(422).json({
+					status: 422,
+					errors: reporter.createError()
 				});
 			}
 			return res.status(500).json({
@@ -75,9 +77,7 @@ class AuthController {
 		try {
 			const body = req.body;
 
-			const validator = vine.compile(loginSchema);
-
-			const payload = await validator.validate(body);
+			const payload = await loginSchema.parseAsync(body);
 
 			const findUser = await prisma.users.findUnique({
 				where: {
@@ -123,10 +123,12 @@ class AuthController {
 		} catch (err) {
 			console.log("The error is: ", err);
 
-			if (err instanceof errors.E_VALIDATION_ERROR) {
-				// Agar validation error hota hai toh yeh code chalega
-				return res.status(400).json({
-					errors: err.messages // Validation errors ko return karte hain
+			if (err instanceof ZodError) {
+				const reporter = new ZodCustomErrorReporter(err);
+
+				return res.status(422).json({
+					status: 422,
+					errors: reporter.createError()
 				});
 			}
 			return res.status(500).json({

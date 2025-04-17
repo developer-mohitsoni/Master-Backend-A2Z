@@ -7,7 +7,6 @@ class MailController {
 	static async sendTestEmail(req: Request, res: Response) {
 		try {
 			const { email } = req.query;
-			console.log(email);
 
 			if (!email || typeof email !== "string") {
 				return res
