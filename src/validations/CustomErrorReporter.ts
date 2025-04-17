@@ -1,18 +1,19 @@
-import { errors } from "@vinejs/vine";
-import type { ErrorReporterContract, FieldContext } from "@vinejs/vine/types";
+import type { ZodError } from "zod";
 
-export class CustomErrorReporter implements ErrorReporterContract {
+export class ZodCustomErrorReporter {
+	errors: { [key: string]: string } = {};
 	hasErrors = false;
 
-	errors: { [key: string]: string } = {};
-
-	report(message: string, rule: string, field: FieldContext, meta?: any) {
+	constructor(error: ZodError) {
 		this.hasErrors = true;
 
-		this.errors[field.wildCardPath] = message;
+		for (const issue of error.issues) {
+			const field = issue.path.join(".") || "form";
+			this.errors[field] = issue.message;
+		}
 	}
 
 	createError() {
-		return new errors.E_VALIDATION_ERROR(this.errors);
+		return this.errors;
 	}
 }
