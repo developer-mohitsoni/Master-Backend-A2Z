@@ -1,4 +1,4 @@
-export const supportedMimes = [
+export const supportedMimes: string[] = [
 	"image/png",
 	"image/jpg",
 	"image/jpeg",
