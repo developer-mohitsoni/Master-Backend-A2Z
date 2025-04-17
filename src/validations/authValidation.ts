@@ -1,17 +1,24 @@
-import vine from "@vinejs/vine";
+import { z } from "zod";
 
-import { CustomErrorReporter } from "./CustomErrorReporter.js";
+export const registerSchema = z
+	.object({
+		name: z
+			.string()
+			.min(2, "Name must be at least 2 characters")
+			.max(150, "Name must be at most 150 characters"),
+		email: z.string().email("Invalid email address"),
+		password: z
+			.string()
+			.min(6, "Password must be at least 6 characters")
+			.max(100, "Password must be at most 100 characters"),
+		password_confirmation: z.string() // Add this for confirmation
+	})
+	.refine((data) => data.password === data.password_confirmation, {
+		message: "Passwords do not match",
+		path: ["password_confirmation"]
+	});
 
-//! Custom Error Reporter
-vine.errorReporter = () => new CustomErrorReporter();
-
-export const registerSchema = vine.object({
-	name: vine.string().minLength(2).maxLength(150),
-	email: vine.string().email(),
-	password: vine.string().minLength(6).maxLength(100).confirmed()
-});
-
-export const loginSchema = vine.object({
-	email: vine.string().email(),
-	password: vine.string()
+export const loginSchema = z.object({
+	email: z.string().email("Invalid email address"),
+	password: z.string().min(1, "Password is required")
 });
