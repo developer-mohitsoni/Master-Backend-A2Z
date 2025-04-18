@@ -4,7 +4,6 @@ import bcrypt from "bcrypt";
 import type { NextFunction, Request, Response } from "express";
 import type { RequestHandler } from "express-serve-static-core";
 import jwt from "jsonwebtoken";
-import { v4 as uuidv4 } from "uuid";
 import { ZodError } from "zod";
 import prisma from "../DB/db.config.js";
 import { loginSchema, registerSchema } from "../validations/authValidation.js";
@@ -38,14 +37,13 @@ class AuthController {
 				payload.password = await bcrypt.hash(payload.password, salt);
 
 				// Generate email verification token
-				const verificationToken = uuidv4();
+				// const verificationToken = uuidv4();
 
 				const user = await prisma.users.create({
 					data: {
 						name: payload.name,
 						email: payload.email,
-						password: payload.password,
-						verificationToken
+						password: payload.password
 					},
 					select: {
 						id: true,
@@ -54,6 +52,12 @@ class AuthController {
 						created_at: true
 					}
 				});
+
+				const verificationToken = jwt.sign(
+					{ userId: user.id, email: user.email },
+					process.env.JWT_SECRET as string,
+					{ expiresIn: "15m" }
+				);
 
 				// Send verification email
 				await sendVerificationEmail(payload.email, verificationToken);
