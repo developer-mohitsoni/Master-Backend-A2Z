@@ -48,7 +48,7 @@ class VerificationEmailController {
 				where: { id: user.id },
 				data: {
 					emailVerified: true,
-					verificationToken: token as string,
+					verificationToken: token as string
 				}
 			});
 
