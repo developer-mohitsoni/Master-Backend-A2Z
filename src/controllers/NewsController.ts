@@ -114,7 +114,7 @@ class NewsController {
 					image: payload.image,
 					user: {
 						connect: {
-							id: Number(payload.userId)
+							id: payload.userId
 						}
 					}
 				},
@@ -161,7 +161,7 @@ class NewsController {
 			const { id } = req.params;
 			const news = await prisma.news.findUnique({
 				where: {
-					id: Number(id)
+					id: id
 				},
 				include: {
 					user: {
@@ -199,7 +199,7 @@ class NewsController {
 
 			const news = await prisma.news.findUnique({
 				where: {
-					id: Number(id)
+					id: id
 				},
 				select: {
 					user_id: true,
@@ -242,7 +242,7 @@ class NewsController {
 					image: payload.image
 				},
 				where: {
-					id: Number(id)
+					id: id
 				}
 			});
 
@@ -285,7 +285,7 @@ class NewsController {
 
 			const news = await prisma.news.findUnique({
 				where: {
-					id: Number(id)
+					id: id
 				},
 				select: {
 					user_id: true,
@@ -305,7 +305,7 @@ class NewsController {
 
 			await prisma.news.delete({
 				where: {
-					id: Number(id)
+					id: id
 				}
 			});
 
