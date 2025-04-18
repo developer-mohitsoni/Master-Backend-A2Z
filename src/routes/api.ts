@@ -6,20 +6,19 @@ import NewsController from "../controllers/NewsController.js";
 import ProfileController from "../controllers/ProfileController.js";
 import authMiddleware from "../middleware/Authenticate.js";
 
+import ForgotPasswordMailController from "@/controllers/ForgotPasswordMailController.js";
 import RefreshTokenController from "@/controllers/RefreshTokenController.js";
+import ResetPasswordController from "@/controllers/ResetPasswordController.js";
+import VerificationResetPasswordMailController from "@/controllers/VerificationResetPasswordMailController.js";
 import VerificationEmailController from "../controllers/VerificationEmailController.js"; // Import VerificationEmailController
 
 const router = Router();
 
-router.get("/auth/verify-email", VerificationEmailController.verifyMailHandler); // Email verification route
-
-router.post("/auth/refresh-token", RefreshTokenController.refreshTokenHandler);
+//* Auth routes
 
 router.post("/auth/register", AuthController.registerHandler);
 
 router.post("/auth/login", AuthController.loginHandler);
-
-router.get("/send-email", MailController.mailHandler);
 
 //*  Profile routes
 
@@ -33,5 +32,30 @@ router.post("/news", authMiddleware, NewsController.storeHandler);
 router.get("/news/:id", cacheMiddleware, NewsController.showHandler);
 router.put("/news/:id", authMiddleware, NewsController.updateHandler);
 router.delete("/news/:id", authMiddleware, NewsController.destroyHandler);
+
+//* Token Routes
+
+router.post("/auth/refresh-token", RefreshTokenController.refreshTokenHandler);
+
+//* Mail Routes
+
+router.get("/send-email", MailController.mailHandler);
+
+router.get("/auth/verify-email", VerificationEmailController.verifyMailHandler); // Email verification route
+
+router.post(
+	"/auth/forgot-password",
+	ForgotPasswordMailController.forgotPasswordMailHandler
+); // Forgot password route
+
+router.get(
+	"/auth/reset-password-email",
+	VerificationResetPasswordMailController.verifyResetPasswordMailHandler
+); // Email verification route
+
+router.post(
+	"/auth/reset-password",
+	ResetPasswordController.resetPasswordHandler
+); // Reset password route
 
 export default router;
