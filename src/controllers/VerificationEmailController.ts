@@ -12,7 +12,7 @@ class VerificationEmailController {
 		});
 
 		if (!user) {
-			return res.status(400).json({ message: "Invalid token" });
+			return res.status(400).json({ message: "Invalid or Expired token" });
 		}
 
 		await prisma.users.update({
