@@ -15,7 +15,8 @@ model Users {
   password          String
   profile           String?
   emailVerified     Boolean  @default(false)
-  verificationToken String? // Token for email verification
+  verificationToken String?
+  refreshToken      String?
   created_at        DateTime @default(now())
   updated_at        DateTime @updatedAt
   News              News[]
