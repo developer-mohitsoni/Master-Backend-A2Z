@@ -9,16 +9,18 @@ datasource db {
 }
 
 model Users {
-  id                String   @id @default(cuid())
+  id                String    @id @default(cuid())
   name              String
-  email             String   @unique
+  email             String    @unique
   password          String
   profile           String?
-  emailVerified     Boolean  @default(false)
+  emailVerified     Boolean   @default(false)
   verificationToken String?
   refreshToken      String?
-  created_at        DateTime @default(now())
-  updated_at        DateTime @updatedAt
+  resetToken        String? // for password reset
+  resetTokenExpiry  DateTime? // for password reset expiry time
+  created_at        DateTime  @default(now())
+  updated_at        DateTime  @updatedAt
   News              News[]
 }
 
