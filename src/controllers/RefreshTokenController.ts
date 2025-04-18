@@ -37,7 +37,7 @@ class RefreshTokenController {
 					const newAccessToken = jwt.sign(
 						{ email: user.email, userId: user.id },
 						process.env.ACCESS_TOKEN_SECRET as string,
-						{ expiresIn: "1m" }
+						{ expiresIn: "15m" }
 					);
 
 					const newRefreshToken = jwt.sign(

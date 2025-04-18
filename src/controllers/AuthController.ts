@@ -127,7 +127,7 @@ class AuthController {
 					payloadData,
 					process.env.ACCESS_TOKEN_SECRET as string,
 					{
-						expiresIn: "2m"
+						expiresIn: "15m"
 					}
 				);
 
