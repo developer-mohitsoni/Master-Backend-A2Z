@@ -36,7 +36,7 @@ class ProfileController {
 
 			const { id } = req.params;
 
-			if (Number(userIdFromToken) !== Number(id)) {
+			if (String(userIdFromToken) !== String(id)) {
 				res
 					.status(403)
 					.json({ message: "You can only update your own profile" });
@@ -112,7 +112,7 @@ class ProfileController {
 					profile: imageName
 				},
 				where: {
-					id: Number(id)
+					id: id
 				},
 				select: {
 					created_at: true,
