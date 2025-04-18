@@ -1,5 +1,6 @@
 import prisma from "@/DB/db.config.js";
 import type { NextFunction, Request, RequestHandler, Response } from "express";
+import jwt from "jsonwebtoken";
 
 class VerificationEmailController {
 	static async verifyEmail(req: Request, res: Response) {
@@ -23,7 +24,23 @@ class VerificationEmailController {
 			}
 		});
 
-		return res.status(200).json({ message: "Email verified successfully" });
+		// Generate JWT for auto-login UX
+		const jwtToken = jwt.sign(
+			{
+				userId: user.id
+			},
+			process.env.JWT_SECRET as string,
+			{
+				expiresIn: "7d"
+			}
+		);
+
+		// Send response with JWT token
+		return res.status(200).json({
+			success: true,
+			message: "Email verified successfully.",
+			token: jwtToken
+		});
 	}
 
 	static verifyMailHandler: RequestHandler = async (
