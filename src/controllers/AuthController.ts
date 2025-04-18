@@ -47,6 +47,14 @@ class AuthController {
 					}
 				);
 
+				// Set refresh token in HTTP-only cookie
+				res.cookie("refreshToken", refreshToken, {
+					httpOnly: true,
+					secure: process.env.NODE_ENV === "production", // Ensures cookie is only sent over HTTPS
+					sameSite: "strict", // CSRF protection
+					maxAge: 7 * 24 * 60 * 60 * 1000 // Refresh token expiry (7 days)
+				});
+
 				const user = await prisma.users.create({
 					data: {
 						name: payload.name,

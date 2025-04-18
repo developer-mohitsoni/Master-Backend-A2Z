@@ -33,6 +33,12 @@ class RefreshTokenController {
 							.json({ message: "Refresh token does not match our records" });
 					}
 
+					res.clearCookie("refreshToken", {
+						httpOnly: true,
+						secure: process.env.NODE_ENV === "production", // Ensures cookie is only sent over HTTPS
+						sameSite: "strict"
+					});
+
 					// Generate a new access token (short-lived token)
 					const newAccessToken = jwt.sign(
 						{ email: user.email, userId: user.id },
@@ -45,6 +51,14 @@ class RefreshTokenController {
 						process.env.REFRESH_TOKEN_SECRET as string,
 						{ expiresIn: "7d" }
 					);
+
+					// Set refresh token in HTTP-only cookie
+					res.cookie("refreshToken", newRefreshToken, {
+						httpOnly: true,
+						secure: process.env.NODE_ENV === "production", // Ensures cookie is only sent over HTTPS
+						sameSite: "strict", // CSRF protection
+						maxAge: 7 * 24 * 60 * 60 * 1000 // Refresh token expiry (7 days)
+					});
 
 					await prisma.users.update({
 						where: { email: user.email },
