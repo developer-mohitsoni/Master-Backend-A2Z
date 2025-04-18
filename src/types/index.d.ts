@@ -8,6 +8,10 @@ export interface User {
 	profile?: string | null;
 	created_at: Date;
 	updated_at: Date;
+	emailVerified?: boolean;
+	verificationToken?: string;
+	resetToken?: string;
+	refreshToken?: string;
 }
 
 export interface News {
