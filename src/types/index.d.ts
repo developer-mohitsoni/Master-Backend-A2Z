@@ -1,7 +1,7 @@
 import type { JwtPayload } from "jsonwebtoken";
 
 export interface User {
-	id: number;
+	id: string;
 	name: string;
 	email: string;
 	password: string;
@@ -11,13 +11,13 @@ export interface User {
 }
 
 export interface News {
-	id: number;
+	id: string;
 	title: string;
 	content: string;
 	image: string;
 	created_at: Date;
 	user: {
-		id: number;
+		id: string;
 		name: string;
 		profile?: string | null;
 	};
