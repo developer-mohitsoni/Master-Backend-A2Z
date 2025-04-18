@@ -1,8 +1,10 @@
+import { sendVerificationEmail } from "@/config/verificationMail.js";
 import { ZodCustomErrorReporter } from "@/validations/CustomErrorReporter.js";
 import bcrypt from "bcrypt";
 import type { NextFunction, Request, Response } from "express";
 import type { RequestHandler } from "express-serve-static-core";
 import jwt from "jsonwebtoken";
+import { v4 as uuidv4 } from "uuid";
 import { ZodError } from "zod";
 import prisma from "../DB/db.config.js";
 import { loginSchema, registerSchema } from "../validations/authValidation.js";
@@ -35,23 +37,50 @@ class AuthController {
 				const salt = await bcrypt.genSalt(10);
 				payload.password = await bcrypt.hash(payload.password, salt);
 
+				// Generate email verification token
+				const verificationToken = uuidv4();
+
 				const user = await prisma.users.create({
 					data: {
 						name: payload.name,
 						email: payload.email,
-						password: payload.password
+						password: payload.password,
+						verificationToken
 					},
 					select: {
-						password: true,
+						id: true,
 						name: true,
-						profile: true
+						email: true,
+						created_at: true
 					}
 				});
+
+				// Generate JWT for auto-login UX
+				const token = jwt.sign(
+					{
+						userId: user.id
+					},
+					process.env.JWT_SECRET as string,
+					{
+						expiresIn: "7d"
+					}
+				);
+
+				// Send verification email
+				await sendVerificationEmail(payload.email, verificationToken);
 
 				return res.json({
 					status: 200,
 					message: "User Created Successfully", // Success message
-					user // User ka data bhi return karte hain
+					data: {
+						user: {
+							id: user.id,
+							name: user.name,
+							email: user.email,
+							createdAt: user.created_at
+						},
+						token
+					}
 				});
 			}
 		} catch (err) {
