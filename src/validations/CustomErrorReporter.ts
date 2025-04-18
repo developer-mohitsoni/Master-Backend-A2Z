@@ -1,7 +1,17 @@
 import type { ZodError } from "zod";
 
-export class ZodCustomErrorReporter {
-	errors: { [key: string]: string } = {};
+interface ZodErrorKeyValue {
+	[key: string]: string;
+}
+
+interface ZodErrorClassInterface {
+	errors: ZodErrorKeyValue;
+	hasErrors: boolean;
+	createError: () => ZodErrorKeyValue;
+}
+
+export class ZodCustomErrorReporter implements ZodErrorClassInterface {
+	errors: ZodErrorKeyValue = {};
 	hasErrors = false;
 
 	constructor(error: ZodError) {
