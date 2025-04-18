@@ -35,7 +35,7 @@ class VerificationEmailController {
 					{ userId: user.id },
 					process.env.JWT_SECRET as string,
 					{
-						expiresIn: "1d"
+						expiresIn: "2m"
 					}
 				);
 
@@ -57,7 +57,7 @@ class VerificationEmailController {
 				{ userId: user.id },
 				process.env.JWT_SECRET as string,
 				{
-					expiresIn: "1d"
+					expiresIn: "2m"
 				}
 			);
 
