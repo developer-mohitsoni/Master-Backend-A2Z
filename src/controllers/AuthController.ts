@@ -55,32 +55,12 @@ class AuthController {
 					}
 				});
 
-				// Generate JWT for auto-login UX
-				const token = jwt.sign(
-					{
-						userId: user.id
-					},
-					process.env.JWT_SECRET as string,
-					{
-						expiresIn: "7d"
-					}
-				);
-
 				// Send verification email
 				await sendVerificationEmail(payload.email, verificationToken);
 
 				return res.json({
 					status: 200,
-					message: "User Created Successfully", // Success message
-					data: {
-						user: {
-							id: user.id,
-							name: user.name,
-							email: user.email,
-							createdAt: user.created_at
-						},
-						token
-					}
+					message: "User registered successfully. Please verify your email."
 				});
 			}
 		} catch (err) {
