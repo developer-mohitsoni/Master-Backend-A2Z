@@ -39,11 +39,20 @@ class AuthController {
 				// Generate email verification token
 				// const verificationToken = uuidv4();
 
+				const refreshToken = jwt.sign(
+					{ email: payload.email },
+					process.env.REFRESH_TOKEN_SECRET as string,
+					{
+						expiresIn: "7d"
+					}
+				);
+
 				const user = await prisma.users.create({
 					data: {
 						name: payload.name,
 						email: payload.email,
-						password: payload.password
+						password: payload.password,
+						refreshToken
 					},
 					select: {
 						id: true,
@@ -56,7 +65,7 @@ class AuthController {
 				const verificationToken = jwt.sign(
 					{ userId: user.id, email: user.email },
 					process.env.JWT_SECRET as string,
-					{ expiresIn: "15m" }
+					{ expiresIn: "5m" }
 				);
 
 				// Send verification email
@@ -64,7 +73,8 @@ class AuthController {
 
 				return res.json({
 					status: 200,
-					message: "User registered successfully. Please verify your email."
+					message: "User registered successfully. Please verify your email.",
+					refreshToken
 				});
 			}
 		} catch (err) {
@@ -107,14 +117,17 @@ class AuthController {
 				}
 
 				const payloadData = {
-					id: findUser.id
+					id: findUser.id,
+					name: findUser.name,
+					email: findUser.email,
+					profile: findUser.profile
 				};
 
 				const accessToken = jwt.sign(
 					payloadData,
 					process.env.ACCESS_TOKEN_SECRET as string,
 					{
-						expiresIn: "1h"
+						expiresIn: "2m"
 					}
 				);
 
@@ -135,12 +148,20 @@ class AuthController {
 					}
 				});
 
+				// Set refresh token in HTTP-only cookie
+				res.cookie("refreshToken", refreshToken, {
+					httpOnly: true,
+					secure: process.env.NODE_ENV === "production", // Ensures cookie is only sent over HTTPS
+					sameSite: "strict", // CSRF protection
+					maxAge: 7 * 24 * 60 * 60 * 1000 // Refresh token expiry (7 days)
+				});
+
 				// const accessToken = token(payloadData);
 
 				return res.json({
 					message: "Logged In",
-					access_token: `Bearer ${accessToken}`,
-					refresh_token: `Bearer ${refreshToken}`
+					accessToken: `Bearer ${accessToken}`,
+					refreshToken
 				});
 			}
 			if (!findUser) {
