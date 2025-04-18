@@ -21,16 +21,20 @@ const authMiddleware = (
 
 	const token = authHeader.split(" ")[1];
 
-	jwt.verify(token, process.env.JWT_SECRET as string, (err, decoded) => {
-		if (err) {
-			return res.status(401).json({
-				status: 401,
-				message: "Unauthorized"
-			});
-		}
+	jwt.verify(
+		token,
+		process.env.ACCESS_TOKEN_SECRET as string,
+		(err, decoded) => {
+			if (err) {
+				return res.status(401).json({
+					status: 401,
+					message: "Unauthorized"
+				});
+			}
 
-		req.user = decoded as MyJwtPayload;
-	});
+			req.user = decoded as MyJwtPayload;
+		}
+	);
 	next();
 };
 
