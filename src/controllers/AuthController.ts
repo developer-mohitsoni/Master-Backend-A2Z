@@ -107,23 +107,40 @@ class AuthController {
 				}
 
 				const payloadData = {
-					id: findUser.id,
-					name: findUser.name,
-					email: findUser.email,
-					profile: findUser.profile
+					id: findUser.id
 				};
 
-				const token = (payloadData: object): string => {
-					return jwt.sign(payloadData, process.env.JWT_SECRET as string, {
-						expiresIn: "365d"
-					});
-				};
+				const accessToken = jwt.sign(
+					payloadData,
+					process.env.ACCESS_TOKEN_SECRET as string,
+					{
+						expiresIn: "1h"
+					}
+				);
 
-				const accessToken = token(payloadData);
+				const refreshToken = jwt.sign(
+					payloadData,
+					process.env.REFRESH_TOKEN_SECRET as string,
+					{
+						expiresIn: "7d"
+					}
+				);
+
+				await prisma.users.update({
+					where: {
+						id: findUser.id
+					},
+					data: {
+						refreshToken
+					}
+				});
+
+				// const accessToken = token(payloadData);
 
 				return res.json({
 					message: "Logged In",
-					access_token: `Bearer ${accessToken}`
+					access_token: `Bearer ${accessToken}`,
+					refresh_token: `Bearer ${refreshToken}`
 				});
 			}
 			if (!findUser) {
