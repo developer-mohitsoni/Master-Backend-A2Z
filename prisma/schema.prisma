@@ -17,7 +17,7 @@ model Users {
   emailVerified     Boolean   @default(false)
   verificationToken String?
   refreshToken      String?
-  resetToken        String? // for password reset
+  resetToken        String?   @unique // for password reset
   resetTokenExpiry  DateTime? // for password reset expiry time
   created_at        DateTime  @default(now())
   updated_at        DateTime  @updatedAt
