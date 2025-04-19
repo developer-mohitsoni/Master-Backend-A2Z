@@ -3,7 +3,7 @@ import type { NextFunction, Request, Response } from "express";
 // Extend the Response interface to include jsonAsync
 declare module "express-serve-static-core" {
 	interface Response {
-		jsonAsync?: (body: any) => Promise<any>;
+		jsonAsync?: (body: any) => void;
 	}
 }
 
@@ -28,11 +28,11 @@ const cacheMiddleware = async (
 		console.log("Cache miss");
 
 		const originalJson = res.json.bind(res);
-		res.jsonAsync = async (body: any) => {
-			await redis.setex(key, 3600, JSON.stringify(body)).catch((err: any) => {
+		res.jsonAsync = (body: any) => {
+			redis.setex(key, 3600, JSON.stringify(body)).catch((err: any) => {
 				console.error("Error setting cache in Redis", err);
 			});
-			return originalJson(body); // ✅ Return response
+			originalJson(body); // ✅ Return response
 		};
 
 		next();
