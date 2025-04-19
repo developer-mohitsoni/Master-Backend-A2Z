@@ -1,3 +1,4 @@
+import { invalidateCache } from "@/config/redisCacheInvalidate.js";
 import { ZodCustomErrorReporter } from "@/validations/CustomErrorReporter.js";
 import type { NextFunction, Request, Response } from "express";
 import type { UploadedFile } from "express-fileupload";
@@ -31,10 +32,10 @@ class NewsController {
 							profile: true
 						}
 					}
-				},
-				cacheStrategy: {
-					ttl: 60 // 1 seconds
 				}
+				// cacheStrategy: {
+				// 	ttl: 60 // 1 seconds
+				// }
 			});
 
 			const newsTransform = news?.map((item) =>
@@ -127,11 +128,7 @@ class NewsController {
 
 			//* remove cache
 
-			const cacheKeyPattern = "master_backend:/api/news*";
-			const keys = await redis.keys(cacheKeyPattern);
-			if (keys.length > 0) {
-				await redis.del(keys);
-			}
+			await invalidateCache("master_backend");
 
 			return res.json({
 				status: 200,
@@ -248,12 +245,7 @@ class NewsController {
 
 			// console.log(req.originalUrl);
 
-			const cacheKeyPattern = "master_backend:/api/news*"; // Pattern for deleting cache
-
-			const keys = await redis.keys(cacheKeyPattern);
-			if (keys.length > 0) {
-				await redis.del(keys);
-			}
+			await invalidateCache("master_backend");
 
 			return res.status(200).json({
 				message: "News Updated Successfully"
