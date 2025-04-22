@@ -5,7 +5,7 @@
     "moduleResolution": "nodenext",
     "lib": ["ES2024", "DOM"],
     "outDir": "./dist",
-    "rootDir": "./src",
+    "rootDir": "./",
     "strict": true,
     "esModuleInterop": true,
     "noImplicitAny": true,
@@ -23,6 +23,6 @@
     "incremental": true, 
     "composite": true
   },
-  "include": ["src"],
+  "include": ["src", "./generated/prisma"],
   "exclude": ["node_modules"]
 }
