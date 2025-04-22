@@ -33,4 +33,6 @@ model News {
   image      String
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
+
+  @@index([user_id], name: "user_id_index")
 }
