@@ -34,5 +34,5 @@ model News {
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
 
-  @@index([user_id], name: "user_id_index")
+  @@index([user_id], name: "user_id_index", type: Hash)
 }
